@@ -1,0 +1,270 @@
+---
+title: "Home credit risk"
+author: "Adarsh fnu"
+date: "03-06-2024"
+output:
+  html_document:
+    toc: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Introduction 
+
+Home Credit is on a mission to empower the unbanked population by offering them access to loans, thereby facilitating their financial inclusion. Understanding the challenges faced by individuals without a conventional banking or credit history, Home Credit employs a strategic approach to evaluate potential borrowers. By leveraging predictive analytics and classification algorithms, the firm meticulously analyzes a customer's financial background, including their credit history with other financial institutions, monthly balance snapshots from various credit sources, and repayment history. This comprehensive evaluation process enables Home Credit to identify reliable clients, ensuring secure lending and a positive borrowing experience for first-time loan recipients. This initiative not only helps in building a robust client portfolio but also fosters customer loyalty, encouraging recommendations and aiding in the company's growth by safely extending credit to those previously considered ineligible due to lack of traditional financial records.
+
+# Project Goal
+The objective of this project is to create sophisticated predictive models that can assess credit risk effectively, utilizing a dataset enriched with telco and transactional data. The ambition is to precisely forecast the ability of Home Credit's clients to fulfill their loan obligations, thus facilitating prudent lending practices. These models are pivotal in augmenting Home Credit's proficiency in evaluating creditworthiness, reducing the likelihood of defaults, and guaranteeing just and equitable credit availability for marginalized groups. Successfully achieving these aims will not only enhance the loan experience for Home Credit's clientele but also advance the broader goals of financial inclusion and empowerment.
+
+
+## Libraries
+```{r}
+#Load libraries
+library(tidyverse)
+library(dplyr)
+library(rpart)
+library(rpart.plot)
+library(skimr)
+library(recipes)
+library(h2o)
+library(tictoc)
+library(rpart.plot)
+
+```
+
+# Import csv file and inspect data
+
+```{r Set up, data import and inspection}
+#Load the required data 
+test_data <- read.csv("application_test.csv")
+
+train_data <- read.csv("application_train.csv")
+
+bureau <- read.csv("bureau.csv")
+
+previous_app <- read.csv("previous_application.csv")
+
+```
+
+## Examine over all data
+
+```{r }
+#examine the structure of the data 
+train_data %>% str()
+```
+
+```{r}
+#First six rows of train dataset
+head(train_data)
+```
+
+## Summary
+```{r summary}
+#summary of the data 
+train_data %>% summary()
+
+```
+
+## Missing Values
+
+```{r}
+#Checking whether there are any missing values in the train data 
+count_missing_values <- function(x) sum(is.na(x))
+
+#Handy summarize all function 
+train_data %>% summarise_all(count_missing_values)
+
+```
+
+## Dealing with missing values
+
+```{r}
+#cleaning the data By handling the missing values 
+
+col_null <- function(train_data,threshold = 0.48){
+  noofrows <- nrow(train_data)
+  null_val <- sapply(train_data,function(x) mean(is.na(x)))#percentage of null values 
+  remove_col <- names(null_val[null_val > threshold])#columns with percentage more than threshold
+  #data with selected columns 
+  train_data <- train_data %>% dplyr::select(-all_of(remove_col))
+  return(train_data)
+}
+#removing the missing value columns 
+train_data <- col_null(train_data)
+
+ count_missing_values <- function(x) sum(is.na(x))
+
+train_data %>% 
+  summarise_all( count_missing_values)
+```
+# Correlation
+```{r}
+#correlation
+# extracting only numeric columns for applying correlation on the data and also excluded the target variable from the data 
+numeric_columns <- names(train_data %>% select_if( is.numeric)%>% select(-TARGET))
+#length of the correlation values data 
+correlationval <- numeric(length(numeric_columns))
+#applying correlation on each column with respect to target variable using for loop
+for (i in seq_along(numeric_columns)) {
+  correlationval[i] <- cor(train_data[[numeric_columns[i]]], train_data[['TARGET']], use = "complete.obs")
+}
+#storing names of all of the columns 
+names(correlationval) <- numeric_columns
+# formatting the output for better display using tibble
+formatted <- tibble(
+  name_of_col = names(correlationval),
+  Correlation = correlationval
+)
+#sorting the values in decreasing order from +ve to -ve
+sortedval <- formatted %>% arrange(desc(correlationval))
+# Display the output
+print(sortedval)
+
+
+```
+So, the top five predictors with positive correlations are DAYS_BIRTH, REGION_RATING_CLIENT_W_CITY, REGION_RATING_CLIENT, DAYS_LAST_PHONE_CHANGE, DAYS_ID_PUBLISH with correlation values between 0.051 to 0.078. 
+The top five predictors with negative correlations are REGION_POPULATION_RELATIVE, AMT_GOODS_PRICE, DAYS_EMPLOYED, EXT_SOURCE_2, EXT_SOURCE_3 with correlation values between -0.037 to -0.178
+With days_birth having the highest positive correlation, it indicates that as the age of the client increases, the target variable will increase by 0.078 
+On the other hand, we can see that Ext_source_3, with the highest value with a negative correlation, indicates that as the ext_source of the client increases, the target variable tends to decrease by 0.178.
+
+# Factor Variables
+```{r factor variables}
+#factorizing  character variables for use of data effectively
+train_data$NAME_CONTRACT_TYPE <- factor(train_data$NAME_CONTRACT_TYPE)
+train_data$CODE_GENDER <- factor(train_data$CODE_GENDER)
+train_data$FLAG_OWN_CAR <- factor(train_data$FLAG_OWN_CAR)
+train_data$FLAG_OWN_REALTY <- factor(train_data$FLAG_OWN_REALTY )
+train_data$NAME_TYPE_SUITE <- factor(train_data$NAME_TYPE_SUITE)
+train_data$NAME_INCOME_TYPE <- factor(train_data$NAME_INCOME_TYPE)
+train_data$NAME_EDUCATION_TYPE <- factor(train_data$NAME_EDUCATION_TYPE)
+train_data$NAME_FAMILY_STATUS <- factor(train_data$NAME_FAMILY_STATUS)
+train_data$NAME_HOUSING_TYPE <- factor(train_data$NAME_HOUSING_TYPE )
+train_data$OCCUPATION_TYPE <- factor(train_data$OCCUPATION_TYPE)
+train_data$WEEKDAY_APPR_PROCESS_START <- factor(train_data$WEEKDAY_APPR_PROCESS_START)
+train_data$ORGANIZATION_TYPE <- factor(train_data$ORGANIZATION_TYPE)
+train_data$FONDKAPREMONT_MODE <- factor(train_data$FONDKAPREMONT_MODE)
+train_data$HOUSETYPE_MODE <- factor(train_data$HOUSETYPE_MODE)
+train_data$WALLSMATERIAL_MODE <- factor(train_data$WALLSMATERIAL_MODE)
+train_data$EMERGENCYSTATE_MODE <- factor(train_data$EMERGENCYSTATE_MODE)
+```
+
+## Structure & Summary after Factorization
+```{r}
+train_data %>% str()
+
+train_data %>% summary()
+```
+## Exploring target variable
+```{r}
+#Exploring the target variable
+target_0 <- train_data %>% 
+  dplyr::summarize(TARGET = mean(TARGET =="0"))
+target_1 <- train_data %>% 
+  dplyr::summarize(TARGET = mean(TARGET =="1"))
+print(target_0)
+print(target_1)
+```
+The above analysis of the target variable shows two values, "0" and "1."
+which shows that :
+value "0" means that the client had no difficulty repaying the loan he took
+value "1" indicates that the client has faced difficulty repaying the loan 
+As we can see, about 91.92% of the people faced no difficulty repaying the loan, while 8.07% faced trouble repaying the loan. 
+
+## Factorizing target variable 
+```{r}
+# as target variable is binary we are factorizing it to see count in each category  
+train_data$TARGET <- factor(train_data$TARGET )
+
+train_data$TARGET %>% str()
+train_data$TARGET %>% summary()
+```
+
+# Visualisations 
+
+
+```{r}
+#Bar graph of name contract type w.r.t Target 
+train_data %>% ggplot() +
+  geom_bar(aes(x= NAME_CONTRACT_TYPE,fill=TARGET), position="dodge") +
+  ggtitle("Barplot of Contract type by Target")+
+theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+```
+In the above bar plot, we can see that most of the clients chose the cash loan option as they are loan options rather than revolving loans and were able to pay the loan back with no difficulty. However, compared to revolving loans, cash loans have more people who faced trouble paying back the loan. 
+
+
+```{r}
+#Bar graph of name_income_type type w.r.t Target 
+train_data %>% ggplot() +
+  geom_bar(aes(x= NAME_INCOME_TYPE,fill=TARGET), position="dodge") +
+  ggtitle("Barplot of income type by target")+
+theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+```
+We can see that the clients with income types such as working have a higher rate of taking loans from the bank, and also, most of them have paid back the loans with no difficulty. Commercial associates come in second place, with most people repaying the loan without difficulty. 
+
+```{r}
+
+#Bar graph of Occupation type w.r.t Target 
+train_data %>% ggplot() +
+  geom_bar(aes(x= OCCUPATION_TYPE,fill=TARGET), position="dodge") +
+  ggtitle("Barplot of occupation by target")+
+theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+```
+
+```{r}
+#Bar graph of CODE_GENDER w.r.t Target 
+train_data %>% ggplot() +
+  geom_bar(aes(x= CODE_GENDER,fill=TARGET), position="dodge") +
+  ggtitle("Barplot of gender by target")+
+theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+The above graph shows that females have a higher rate of taking loans from the bank and repaying the loans with no difficulty compared to men, while the number of men taking loans from the banks is less than that of females.
+
+# Merging the new data 
+```{r}
+# merging bureau and train data 
+newmergeddata <- merge(train_data,bureau, by = "SK_ID_CURR",all = FALSE)
+
+head(newmergeddata)
+
+```
+# data cleaning 
+```{r}
+#cleaning the data By handling the missing values 
+
+col_null <- function(newmergeddata,threshold = 0.48){
+  noofrows <- nrow(newmergeddata)
+  null_val <- sapply(newmergeddata,function(x) mean(is.na(x)))#percentage of null values 
+  remove_col <- names(null_val[null_val > threshold])#columns with percentage more than threshold
+  #data with selected columns 
+  newmergeddata <- newmergeddata %>% dplyr::select(-all_of(remove_col))
+  return(newmergeddata)
+}
+#removing the missing value columns 
+newmergeddata <- col_null(newmergeddata)
+
+ count_missing_values <- function(x) sum(is.na(x))
+
+newmergeddata %>%  summarise_all(count_missing_values)
+```
+# Conclusion 
+
+From the above analysis of home credit default risk, we have analysed how each client can repay the loan by considering different parameters of the client and to see whether they are eligible for a loan. In this data, we can see that 91.92%(target = 0) of the clients didn't face any difficulty repaying the loan, and about 8.07% (target = 1) of clients were troubled while paying back the loan. In the data, we can see that age(DAYS_BIRTH) has the highest positive correlation with the target variable, which shows that if there is one unit increase in the age, it can increase the target by 0.078 and in contrast to this, EXT_SOURCE has the highest negative correlation value of 0.178 which indicates that increase in one unit of ext_source_3 decreases target by 0.178. We can also see that in terms of gender, nearly 180000 females tend to take and repay a loan to the bank with no difficulty, which is roughly twice the count of men (9000). Both in the female and male categories, we can see that around 10000 found it challenging to repay the loan.
+Regarding loan type, we can see that 300000 clients have opted for cash loans instead of revolving loans. We can see that the count of people who found it difficult to pay back the cash loan(15,000) is equal to people who took revolving loans, and we can see that the working class clients, about 140000 people, tend to take more loans and repay them with no difficulty. With the above analysis, the clients who are eligible for loans and repay them would be those in the working class who tend to take more cash loans. Too when it comes to gender, females tend to show more interest in taking loans. 
+
+
+
+
+
+
+
+
+
+
