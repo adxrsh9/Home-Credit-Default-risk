@@ -38,3 +38,9 @@ The need for robust computational resources was highlighted by the demands of pr
 ## My learnings 
 
 This end-to-end project, from pinpointing the business problem to extracting meaningful business value, significantly enhanced my skills across multiple dimensions. I deepened my knowledge in Exploratory Data Analysis and refined my expertise with Logistic Regression and Random Forest models. This project also marked my first encounter with the LGBM model; delving into its complexities and tuning the model proved to be a challenging but immensely rewarding experience. I was also introduced to techniques such as upsampling and downsampling to tackle the issue of imbalanced data, which was a new and enlightening aspect for me. Utilizing ROC-AUC curves and feature importance charts allowed me to effectively translate technical outcomes into clear, actionable business insights. Engaging with large datasets in a real-world setting not only bolstered my analytical acumen but also ignited my passion for overcoming similar challenges in the future, pushing me to further explore and master advanced analytical tools in my upcoming projects.
+
+## Presentation Link
+[Home Credit PPT](https://github.com/adxrsh9/Home-Credit-Default-risk/blob/cb50667811d2922edd55c73433d06edd529e16d1/Capstone%20Presentation%20Group%206.pptx)
+
+## Project file link
+[Project File]()
