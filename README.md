@@ -43,4 +43,4 @@ This end-to-end project, from pinpointing the business problem to extracting mea
 [Home Credit PPT](https://github.com/adxrsh9/Home-Credit-Default-risk/blob/cb50667811d2922edd55c73433d06edd529e16d1/Capstone%20Presentation%20Group%206.pptx)
 
 ## Project file link
-[Project File]()
+[Project File](https://github.com/adxrsh9/Home-Credit-Default-risk/blob/32b3c7cd05a8c1b94ed115741a8bf865d99b987a/Home%20Credit_new_Group_6_modified%20(1).ipynb)
