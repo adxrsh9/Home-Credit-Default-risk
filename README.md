@@ -1,43 +1,64 @@
 # Home-Credit-Default-risk
 ## Business problem 
-Many individuals who lack access to formal banking due to no credit histories are often vulnerable to predatory lenders who impose high-interest rates and unfair loan terms, worsening their financial stability. Home Credit, a non-banking financial institution, addresses this issue by offering safer lending options to those with minimal or no credit histories. By focusing on financial inclusion, Home Credit aims to empower economic improvement for its clients.
-
-This financial inclusion initiative presents significant risks for Home Credit, particularly due to the high likelihood of loan defaults among borrowers with limited credit histories. Nevertheless, the institution is committed to ensuring that clients who are capable of repayment are not unfairly excluded from receiving loans. To address these challenges while minimizing risk, Home Credit focuses on developing methods to accurately predict the loan repayment abilities of applicants, ultimately facilitating more informed and cautious lending decisions.
+Home Credit aims to identify which unbanked clients are eligible for a loan and can afford to repay it. Many individuals with no credit history often rely on predatory lenders charging excessive interest rates and imposing unfavorable terms. Home Credit's objective is to provide safer lending options for such individuals, focusing on accurately assessing applicants' repayment abilities to ensure those capable of repayment receive fair access to loans. The challenge lies in identifying eligible clients without credit histories who can repay loans, ultimately preventing them from falling into the cycle of predatory lending.
 
 ## Solution 
-The solution to this issue involves the use of supervised predictive classification models, capitalizing on historical labeled data to forecast loan repayment behaviors. With the target variable being binary—'0' for on-time repayment and '1' for potential repayment issues—techniques like Logistic Regression, Random Forest, and Light Gradient Boosting Machine (LightGBM) are particularly suited for this analysis.
-
-In terms of evaluating these models, performance metrics such as the Area Under the Curve (AUC) from the receiver operating characteristics (ROC) curves are used. Notably, models like Random Forest and LightGBM have demonstrated strong performance, achieving test AUCs and scores on Kaggle around 0.63. This performance level signifies a robust capability to differentiate between customers likely to repay their loans on time and those who might encounter difficulties, thereby supporting more precise lending decisions.
+### Accurate Client Assessment:
+Utilizes supervised predictive classification models to analyze client repayment behaviors.
+Differentiates between clients likely to repay on time and those prone to repayment challenges.
+### Confident Lending:
+Minimizes the risk of non-repayment by confidently extending loans.
+Offers safer lending options to clients with limited or no credit history.
+### Predictive Model Selection:
+Applies models like Logistic Regression, Random Forest, and Light Gradient Boosting Machine (LightGBM) for historical trend analysis.
+Focuses on a binary target variable ('0' for on-time repayment, '1' for potential repayment issues).
+### Model Performance Metrics:
+Evaluates models using Area Under the Curve (AUC) from receiver operating characteristics (ROC) curves.
+Random Forest and LightGBM models demonstrated strong predictive power, achieving test AUC scores of around 0.63 on Kaggle.
+These high AUC scores reflect these models' accuracy in distinguishing between reliable clients and those at risk of default.
+### Strategic Benefits:
+Leads to secure borrowing experiences for first-time borrowers.
+Establishes trust through fair and inclusive lending practices.
+Grows Home Credit's customer base via positive client recommendations.
 
 ## Contribution:
-My contribution to the project included implementing cross-validation and balancing techniques like upsampling and downsampling to enhance model generalizability and performance. I employed ROC-AUC curves for effectiveness assessment and conducted feature importance analysis to refine model inputs. Additionally, I was responsible for fitting and fine-tuning the Light Gradient Boosting Machine (LightGBM) model, optimizing parameters based on validation insights, and preparing the test set for final model deployment.
+
+- **Cross-Validation:** Implemented cross-validation techniques to enhance model robustness and generalizability.
+- **Sampling Techniques:** Applied upsampling and downsampling methods to balance the data for better performance.
+- **ROC-AUC Curves:** Used ROC-AUC curves to assess model effectiveness and refine the predictive process.
+- **Feature Importance:** Conducted feature importance analysis to optimize model inputs.
+- **LightGBM Model:** Fitted, tuned, and fine-tuned the Light Gradient Boosting Machine (LightGBM) model, optimizing parameters based on validation results.
+- **Model Predictions:** Generated accurate predictions using the tuned LightGBM model.
+- **Test Set Preparation:** Prepared the test set for final model deployment.
+- **Final Edits:** Managed the final model edits to ensure accuracy and reliability.
 
 ## Business Benefits
 
-Enhanced Decision-Making in Lending: By leveraging models such as Logistic Regression, Random Forest, and LGBM, Home Credit can make more precise and confident loan approval decisions. These models provide accurate forecasts of repayment behaviors, greatly aiding the decision-making process.
+### Business Benefits
 
-Mitigation of Financial Risks:  Improved predictive models help in early identification of potential defaulters, significantly reducing the occurrence of Non-Performing Assets and mitigating associated financial risks.
+1. **Improved Lending Precision:**  
+   The optimized models provided more accurate predictions, allowing Home Credit to identify clients with higher repayment probabilities. This precision minimizes the risk of non-repayment, leading to more informed lending decisions.
 
-Efficiency in Loan Processing:  The integration of machine learning models into the loan processing workflow automates many steps, accelerating the approval process, lowering operational costs, and enhancing customer satisfaction.
+2. **Increased Financial Inclusion:**  
+   By evaluating repayment ability more accurately through advanced predictive techniques, Home Credit can extend fair and safe lending options to clients with limited or no credit history, thereby promoting financial inclusion.
 
-Tailored Financial Offerings:   Outputs from these models facilitate the customization of credit offerings, allowing for adjustments in credit limits and interest rates based on individual risk profiles.
+3. **Portfolio Strengthening:**  
+   Enhanced prediction models result in a stronger, more reliable portfolio by reducing the number of non-performing loans and increasing overall repayment rates.
 
-Proactive Default Prevention:   Advanced predictive insights empower Home Credit to implement preemptive measures such as financial counseling to reduce the risk of defaults.
+4. **Better Resource Allocation:**  
+   Improved models streamline the loan approval process, helping Home Credit allocate resources efficiently by focusing efforts on clients who align with the institution's risk tolerance.
 
-Optimal Use of Resources:    Accurate loan repayment predictions enable more efficient allocation of resources, focusing manual reviews on high-risk cases and streamlining approvals for lower-risk applications.
+5. **Positive Customer Experience:**  
+   First-time borrowers benefit from secure borrowing experiences, building trust and fostering brand loyalty. Satisfied clients are more likely to recommend Home Credit, expanding the company's customer base through positive word of mouth.
 
-Increased Repayment Success:   Reliable prediction of repayment behaviors ensures that loans are extended to clients with a higher likelihood of fulfillment, boosting repayment rates and enhancing overall profitability of the loan portfolio
-
+6. **Data-Driven Insights:**  
+   Feature importance analysis and ROC-AUC evaluations offer valuable insights into client behaviors and repayment trends, which can further guide future lending strategies and model development.
 
 ## Challenges faced 
-
-Throughout the project, I faced numerous challenges that affected both the modeling techniques and data management. One major issue was dealing with missing values in data columns that were significantly correlated with the target variable, making data imputation complex without risking bias. Additionally, optimizing the Random Forest and LGBM models was computationally intensive, pushing the limits of our systems. Specifically, the LGBM model required precise tuning of parameters to strike the right balance between accuracy and computational load.
-
-The need for robust computational resources was highlighted by the demands of processing large datasets and running sophisticated models. In my role, I also took on the responsibility of determining feature importance and rigorously testing the models to validate their accuracy and reliability under various conditions. This added an additional layer of complexity to the project, emphasizing the importance of thorough testing and validation to ensure the models' effectiveness in real-world applications.
+During the implementation phase, cross-validation across multiple folds proved challenging, particularly in managing computational resources and processing time without compromising accuracy. Achieving the right balance in sampling techniques was also crucial; while upsampling risked overfitting, under-sampling could result in losing valuable data, necessitating iterative adjustments to ensure optimal balance. Fine-tuning the LightGBM model required extensive grid search for the best parameters, which took significant time due to the model's complexity and the vast array of hyperparameters to consider. Lastly, generating accurate predictions while minimizing false positives and negatives was challenging due to the dataset's diverse characteristics, demanding a comprehensive evaluation.
 
 ## My learnings 
-
-This end-to-end project, from pinpointing the business problem to extracting meaningful business value, significantly enhanced my skills across multiple dimensions. I deepened my knowledge in Exploratory Data Analysis and refined my expertise with Logistic Regression and Random Forest models. This project also marked my first encounter with the LGBM model; delving into its complexities and tuning the model proved to be a challenging but immensely rewarding experience. I was also introduced to techniques such as upsampling and downsampling to tackle the issue of imbalanced data, which was a new and enlightening aspect for me. Utilizing ROC-AUC curves and feature importance charts allowed me to effectively translate technical outcomes into clear, actionable business insights. Engaging with large datasets in a real-world setting not only bolstered my analytical acumen but also ignited my passion for overcoming similar challenges in the future, pushing me to further explore and master advanced analytical tools in my upcoming projects.
+In this project, learning about LightGBM and optimizing its parameters through grid search significantly improved my model-tuning skills. Mastering ROC-AUC curves was particularly valuable for understanding predictive accuracy, especially when working with imbalanced datasets. Upsampling and downsampling techniques proved essential for ensuring model robustness and generalizability. These methods collectively enabled me to provide meaningful business value by building models that identified eligible clients more effectively, reduced the risk of non-repayment, and improved lending precision.
 
 ## Presentation Link
 [Home Credit PPT](https://github.com/adxrsh9/Home-Credit-Default-risk/blob/cb50667811d2922edd55c73433d06edd529e16d1/Capstone%20Presentation%20Group%206.pptx)
